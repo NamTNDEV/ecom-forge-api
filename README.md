@@ -1,6 +1,6 @@
-# 🔥 EcomForge: E-commerce Backend Learning Platform
+# 🛍️🛒 EcomForge: E-commerce Backend Learning Platform
 
-Welcome to **EcomForge**! This is an educational backend project for building a scalable E-commerce system using modern backend technologies. It's designed as a **learning playground** to explore practical aspects of backend development, system design, and integration.
+Welcome to **EcomForgeApi**! This is an educational backend project for building a scalable E-commerce system using modern backend technologies. It's designed as a **learning playground** to explore practical aspects of backend development, system design, and integration.
 
 ## 🎯 Learning Objectives & Focus
 
@@ -40,13 +40,13 @@ This project focuses on:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/NamTNDEV/EcomForge.git
+git clone https://github.com/NamTNDEV/ecom-forge-api.git
 ```
 
 2. Navigate into the project:
 
 ```bash
-cd EcomForge
+cd ecom-forge-api
 ```
 
 3. Install dependencies:
@@ -61,14 +61,6 @@ npm install
 ```bash
 npm run dev
 ```
-
-## 📚 Project Philosophy
-
-EcomForge is not just a project, it's a **learning journey**. Mistakes are welcome. Refactoring is celebrated. You are encouraged to:
-
-- Experiment
-- Ask questions
-- Break things (and fix them!)
 
 Let the learning begin 🚀
 
