@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
+const { checkOverloaded } = require('./helpers/connectChecker'); // Import connectChecker if needed
+
 const app = express();
 
 // Init Middleware
@@ -16,6 +18,8 @@ app.use(helmet());
 app.use(compression()); // Parses incoming requests with JSON payloads
 
 // Init Database
+const db = require('./configs/db.init'); // Ensure this file initializes the database connection
+checkOverloaded(); // Start checking for overloaded connections
 
 // Init Routes
 app.get('/', (req, res) => {
