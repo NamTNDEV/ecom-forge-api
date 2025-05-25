@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
+const envBaseConfig = require('../configs/env.config');
 const { countConnectedClients } = require('../helpers/connectChecker');
-
-const _CONNECTION_STRING =
-  process.env.MONGODB_URI ||
-  'mongodb+srv://nhatnam312002:xlJkNxzJfQi4fxvH@cluster0.y4vzsta.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 class Database {
   constructor() {
@@ -19,7 +16,7 @@ class Database {
 
   async connect() {
     try {
-      await mongoose.connect(_CONNECTION_STRING, {
+      await mongoose.connect(envBaseConfig.db.uri, {
         maxPoolSize: 50,
       });
       console.log('🟢 Database connected successfully!!');

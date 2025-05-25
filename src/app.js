@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(compression()); // Parses incoming requests with JSON payloads
 
 // Init Database
-const db = require('./configs/db.init'); // Ensure this file initializes the database connection
+const db = require('./configs/db.config'); // Ensure this file initializes the database connection
 checkOverloaded(); // Start checking for overloaded connections
 
 // Init Routes
