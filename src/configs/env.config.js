@@ -9,6 +9,12 @@ const envBaseConfig = {
     uri:
       process.env[`${_ENV}_DB_URI`] || 'mongodb://localhost:27017/ecom-forge',
   },
+  jwt: {
+    expiresIn: {
+      accessToken: process.env[`${_ENV}_JWT_ACCESS_TOKEN_EXPIRES_IN`] || '15m',
+      refreshToken: process.env[`${_ENV}_JWT_REFRESH_TOKEN_EXPIRES_IN`] || '7d',
+    },
+  },
 };
 
 module.exports = envBaseConfig;

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const envBaseConfig = require('../configs/env.config');
-const { countConnectedClients } = require('../helpers/connectChecker');
+const { countConnectedClients } = require('../helpers/connectChecker.helper');
 
 class Database {
   constructor() {

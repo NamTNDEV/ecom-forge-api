@@ -2,7 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const compression = require('compression');
-const { checkOverloaded } = require('./helpers/connectChecker'); // Import connectChecker if needed
+const { checkOverloaded } = require('./helpers/connectChecker.helper'); // Import connectChecker if needed
+const router = require('./routes'); // Import your routes
 
 const app = express();
 
@@ -17,16 +18,15 @@ app.use(helmet());
 // o0o --- Compression: is a middleware that compresses response bodies for all requests that traverse through the middleware --- o0o
 app.use(compression()); // Parses incoming requests with JSON payloads
 
+app.use(express.json()); // Parses incoming requests with URL-encoded payloads
+app.use(express.urlencoded({ extended: true })); // Parses incoming requests with multipart/form-data payloads
+
 // Init Database
 const db = require('./configs/db.config'); // Ensure this file initializes the database connection
 checkOverloaded(); // Start checking for overloaded connections
 
 // Init Routes
-app.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'Welcome to the API!',
-  });
-});
+app.use('', router);
 
 // Error Handling Middleware
 
