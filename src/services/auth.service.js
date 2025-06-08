@@ -24,34 +24,50 @@ class AuthService {
         roles: [ShopRoles.SHOP],
       });
       if (newShop) {
-        const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 2096,
-          publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem',
-          },
-          privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem',
-          },
-        });
-        const publicKeyString = keyTokenService.createKeyToken({
-          userId: newShop._id,
-          publicKey: publicKey,
-        });
+        // --- Generate RSA key pair ---
+        // const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        //   modulusLength: 2096,
+        //   publicKeyEncoding: {
+        //     type: 'spki',
+        //     format: 'pem',
+        //   },
+        //   privateKeyEncoding: {
+        //     type: 'pkcs8',
+        //     format: 'pem',
+        //   },
+        // });
 
-        if (!publicKeyString) {
-          return {
-            code: 'xxxx',
-            message: 'Public key is error',
-          };
-        }
+        // const publicKeyString = keyTokenService.createKeyToken({
+        //   userId: newShop._id,
+        //   publicKey: publicKey,
+        // });
 
+        // if (!publicKeyString) {
+        //   return {
+        //     code: 'xxxx',
+        //     message: 'Public key is error',
+        //   };
+        // }
+
+        // const tokens = createTokenPair(
+        //   { userId: newShop._id, email },
+        //   privateKey
+        // );
+        // --- End for RSA Version ---
+
+        // --- JWT Basic Level Version ---
+        const accessSecretKey = crypto.randomBytes(64).toString('hex');
+        const refreshSecretKey = crypto.randomBytes(64).toString('hex');
         const tokens = createTokenPair(
           { userId: newShop._id, email },
-          privateKey
+          accessSecretKey,
+          refreshSecretKey
         );
-
+        await keyTokenService.createKeyToken({
+          userId: newShop._id,
+          accessSecretKey,
+          refreshSecretKey,
+        });
         return {
           code: 201,
           metadata: {

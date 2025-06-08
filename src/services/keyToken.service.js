@@ -1,18 +1,25 @@
 const keyTokenModel = require('../models/keyToken.model');
 
-class keyTokenService {
-  static createKeyToken = async ({ userId, publicKey }) => {
+class KeyTokenService {
+  static createKeyToken = async ({
+    userId,
+    accessSecretKey,
+    refreshSecretKey,
+  }) => {
     try {
-      const publicKeyString = publicKey.toString();
+      const accessSecretKeyString = accessSecretKey.toString();
+      const refreshSecretKeyString = refreshSecretKey.toString();
       const keyToken = await keyTokenModel.create({
         user: userId,
-        publicKey: publicKeyString,
+        accessTokenSecret: accessSecretKeyString,
+        refreshTokenSecret: refreshSecretKeyString,
       });
-      return keyToken ? publicKeyString : null;
+      console.log('Key token created successfully:', keyToken);
     } catch (error) {
+      console.log('Error creating key token:', error);
       return error;
     }
   };
 }
 
-module.exports = keyTokenService;
+module.exports = KeyTokenService;
