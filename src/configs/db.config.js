@@ -4,7 +4,20 @@ const { countConnectedClients } = require('../helpers/connectChecker.helper');
 
 class Database {
   constructor() {
-    this.db = this.connect();
+    this._connect();
+  }
+
+  async _connect() {
+    try {
+      await mongoose.connect(envBaseConfig.db.uri, {
+        maxPoolSize: 50,
+      });
+      console.log('🟢 Database connected successfully!!');
+      countConnectedClients();
+    } catch (error) {
+      console.error('🔴 Database connection error::', error);
+      process.exit(1);
+    }
   }
 
   static getInstance() {
@@ -12,20 +25,6 @@ class Database {
       Database.instance = new Database();
     }
     return Database.instance;
-  }
-
-  async connect() {
-    try {
-      await mongoose.connect(envBaseConfig.db.uri, {
-        maxPoolSize: 50,
-      });
-      console.log('🟢 Database connected successfully!!');
-      // Optionally, you can log the number of connected clients
-      countConnectedClients();
-    } catch (error) {
-      console.error('🔴 Database connection error::', error);
-      throw error;
-    }
   }
 }
 

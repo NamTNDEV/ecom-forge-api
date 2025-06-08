@@ -1,4 +1,5 @@
 const keyTokenModel = require('../models/keyToken.model');
+const { InternalServerError } = require('../utils/appError');
 
 class KeyTokenService {
   static createKeyToken = async ({
@@ -14,10 +15,12 @@ class KeyTokenService {
         accessTokenSecret: accessSecretKeyString,
         refreshTokenSecret: refreshSecretKeyString,
       });
-      console.log('Key token created successfully:', keyToken);
+      if (!keyToken) {
+        throw new InternalServerError('Failed to store key token.');
+      }
+      return keyToken;
     } catch (error) {
-      console.log('Error creating key token:', error);
-      return error;
+      throw new InternalServerError(error.message);
     }
   };
 }

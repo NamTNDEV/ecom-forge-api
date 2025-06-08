@@ -23,11 +23,13 @@ app.use(express.urlencoded({ extended: true })); // Parses incoming requests wit
 
 // Init Database
 const db = require('./configs/db.config'); // Ensure this file initializes the database connection
+const { errorHandler } = require('./middlewares/handleError');
 checkOverloaded(); // Start checking for overloaded connections
 
 // Init Routes
 app.use('', router);
 
 // Error Handling Middleware
+app.use(errorHandler);
 
 module.exports = app;
