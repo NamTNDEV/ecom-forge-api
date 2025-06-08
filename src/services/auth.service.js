@@ -4,15 +4,17 @@ const crypto = require('crypto');
 const keyTokenService = require('./keyToken.service');
 const ShopRoles = require('../constants/shopRoles.constant');
 const { createTokenPair } = require('../utils/jwt');
-const { ConflictError, InternalServerError } = require('../utils/appError');
+const {
+  ConflictError,
+  InternalServerError,
+} = require('../utils/responses/appError');
+const ERROR_MESSAGES = require('../constants/errorMessages');
 
 class AuthService {
   static signup = async ({ name, email, password }) => {
     const exitedShop = await shopModel.findOne({ email }).lean();
     if (exitedShop) {
-      throw new ConflictError(
-        'Shop with this email already exists. Please use a different email.'
-      );
+      throw new ConflictError(ERROR_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -23,9 +25,7 @@ class AuthService {
       roles: [ShopRoles.SHOP],
     });
     if (!newShop) {
-      throw new InternalServerError(
-        'Failed to create a new shop. Please try again later.'
-      );
+      throw new InternalServerError(ERROR_MESSAGES.FAILED_TO_CREATE_NEW_SHOP);
     }
     // --- Generate RSA key pair ---
     // const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
@@ -72,10 +72,7 @@ class AuthService {
       refreshSecretKey,
     });
     return {
-      code: 201,
-      metadata: {
-        tokens,
-      },
+      tokens,
     };
   };
 }

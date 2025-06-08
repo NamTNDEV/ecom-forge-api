@@ -1,5 +1,5 @@
-const { ERROR_MESSAGES } = require('../constants/message.constant');
-const { ForbiddenError } = require('../utils/appError');
+const { ForbiddenError } = require('../utils/responses/appError');
+const ERROR_MESSAGES = require('../constants/errorMessages');
 
 const checkPermission = (...allowedPermissions) => {
   return async (req, res, next) => {

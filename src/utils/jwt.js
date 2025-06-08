@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const envBaseConfig = require('../configs/env.config');
-const { InternalServerError } = require('./appError');
+const { InternalServerError } = require('./responses/appError');
+const ERROR_MESSAGES = require('../constants/errorMessages');
 
 const JWT_ALGORITHM = 'HS256';
 
@@ -24,9 +25,7 @@ const createTokenPair = (payload, accessSecret, refreshSecret) => {
     const refreshToken = createRefreshToken(payload, refreshSecret);
     return { accessToken, refreshToken };
   } catch (error) {
-    throw new InternalServerError(
-      'Failed to create token pair. Please try again later.'
-    );
+    throw new InternalServerError(ERROR_MESSAGES.FAILED_TO_CREATE_TOKEN_PAIR);
   }
 };
 
@@ -34,7 +33,7 @@ const verifyToken = (token, secret) => {
   try {
     return jwt.verify(token, secret, { algorithms: [JWT_ALGORITHM] });
   } catch (err) {
-    throw new InternalServerError('Invalid or expired token');
+    throw new InternalServerError(ERROR_MESSAGES.FAILED_TO_VERIFY_TOKEN);
   }
 };
 

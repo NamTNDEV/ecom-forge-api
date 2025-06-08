@@ -1,14 +1,14 @@
-const { ERROR_MESSAGES } = require('../constants/message.constant');
+const ERROR_MESSAGES = require('../constants/errorMessages');
 
 const errorHandler = (err, req, res, next) => {
-  const errorStatus = err.code || err.statusCode || 500;
+  const status = err.status || err.statusCode;
   const response = {
-    status: err.status || `ERROR_${errorStatus}`,
-    code: errorStatus,
+    status,
+    code: err.code || `ERROR_${status}`,
     message: err.message || ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     ...(err.errors && { errors: err.errors }),
   };
-  return res.status(errorStatus).json(response);
+  return res.status(status).json(response);
 };
 
 const asyncErrorHandler = fn => {

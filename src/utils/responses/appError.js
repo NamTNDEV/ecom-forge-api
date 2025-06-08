@@ -1,5 +1,5 @@
-const HTTP_STATUS = require('../constants/httpStatusCodes.constant');
-const { ERROR_MESSAGES } = require('../constants/message.constant');
+const HTTP_STATUS = require('../../constants/httpStatusCodes.constant');
+const ERROR_MESSAGES = require('../../constants/errorMessages');
 
 class ErrorResponse extends Error {
   constructor({
@@ -8,9 +8,8 @@ class ErrorResponse extends Error {
     errors = null,
   }) {
     super(message);
-
-    this.code = statusCode;
-    this.status = `ERROR_${statusCode}`;
+    this.status = statusCode;
+    this.code = `ERROR_${statusCode}`;
     this.message = message;
     if (errors) this.errors = errors;
 

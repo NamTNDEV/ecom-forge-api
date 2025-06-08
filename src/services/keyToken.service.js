@@ -1,5 +1,6 @@
 const keyTokenModel = require('../models/keyToken.model');
-const { InternalServerError } = require('../utils/appError');
+const { InternalServerError } = require('../utils/responses/appError');
+const ERROR_MESSAGES = require('../constants/errorMessages');
 
 class KeyTokenService {
   static createKeyToken = async ({
@@ -16,7 +17,7 @@ class KeyTokenService {
         refreshTokenSecret: refreshSecretKeyString,
       });
       if (!keyToken) {
-        throw new InternalServerError('Failed to store key token.');
+        throw new InternalServerError(ERROR_MESSAGES.FAILED_TO_STORE_KEY_TOKEN);
       }
       return keyToken;
     } catch (error) {

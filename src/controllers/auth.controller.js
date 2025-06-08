@@ -1,12 +1,14 @@
-const HTTP_STATUS = require('../constants/httpStatusCodes.constant');
+const SUCCESS_MESSAGES = require('../constants/successMessages');
 const AuthService = require('../services/auth.service');
+const { CreatedSuccess } = require('../utils/responses/successResponse');
 
 class AuthController {
   signUp = async (req, res) => {
     const { name, email, password } = req.body;
-    return res
-      .status(HTTP_STATUS.CREATED)
-      .json(await AuthService.signup({ name, email, password }));
+    new CreatedSuccess({
+      message: SUCCESS_MESSAGES.SHOP_CREATED,
+      metadata: await AuthService.signup({ name, email, password }),
+    }).send(res);
   };
 }
 
