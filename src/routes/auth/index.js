@@ -27,4 +27,9 @@ router.post(
   asyncErrorHandler(authController.logout)
 );
 
+router.post(
+  '/shops/refresh-token',
+  asyncErrorHandler(authController.refreshToken)
+);
+
 module.exports = router;

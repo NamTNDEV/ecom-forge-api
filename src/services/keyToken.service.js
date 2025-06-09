@@ -9,6 +9,7 @@ class KeyTokenService {
     refreshToken,
     accessSecretKey,
     refreshSecretKey,
+    usedRefreshTokens = [],
   }) => {
     try {
       const accessSecretKeyString = accessSecretKey.toString();
@@ -22,7 +23,7 @@ class KeyTokenService {
       const filter = { user: userId };
       const update = {
         refreshToken,
-        usedRefreshTokens: [],
+        usedRefreshTokens,
         accessTokenSecret: accessSecretKeyString,
         refreshTokenSecret: refreshSecretKeyString,
       };
@@ -46,6 +47,36 @@ class KeyTokenService {
 
   static deleteKeyTokenByUserId = async userId => {
     return await keyTokenModel.findOneAndDelete({ user: userId }).lean();
+  };
+
+  static isRefreshTokenReused = async refreshTokenFromClient => {
+    // C1: Mongose - ORM powerful:
+    // return !!(
+    //   await keyTokenModel.findOne({
+    //     usedRefreshTokens: refreshTokenFromClient,
+    //   })
+    // );
+
+    // C2: Raw query:
+    return !!(await keyTokenModel.findOne({
+      usedRefreshTokens: { $elemMatch: { $eq: refreshTokenFromClient } },
+    }));
+  };
+
+  static findByUsedRefreshToken = async refreshToken => {
+    return await keyTokenModel
+      .findOne({
+        usedRefreshTokens: refreshToken,
+      })
+      .lean();
+  };
+
+  static findByRefreshToken = async refreshToken => {
+    return await keyTokenModel
+      .findOne({
+        refreshToken,
+      })
+      .lean();
   };
 }
 

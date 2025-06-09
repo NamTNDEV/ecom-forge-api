@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const keyTokenService = require('./keyToken.service');
 const ShopRoles = require('../constants/shopRoles.constant');
-const { createTokenPair } = require('../utils/jwt');
+const { createTokenPair, verifyToken } = require('../utils/jwt');
 const {
   ConflictError,
   InternalServerError,
@@ -11,6 +11,7 @@ const {
 } = require('../utils/responses/appError');
 const ERROR_MESSAGES = require('../constants/errorMessages');
 const ShopService = require('./shop.service');
+const KeyTokenService = require('./keyToken.service');
 
 class AuthService {
   static signin = async ({ email, password }) => {
@@ -119,6 +120,67 @@ class AuthService {
 
   static logout = async userId => {
     return await keyTokenService.deleteKeyTokenByUserId(userId);
+  };
+
+  static refreshToken = async ({ refreshToken: refreshTokenFromClient }) => {
+    if (await KeyTokenService.isRefreshTokenReused(refreshTokenFromClient)) {
+      console.warn('⚠️ Reused refresh token detected. Possible token theft!');
+      const reusedRecord = await keyTokenService.findByUsedRefreshToken(
+        refreshTokenFromClient
+      );
+      if (reusedRecord && reusedRecord.user) {
+        await keyTokenService.deleteKeyTokenByUserId(reusedRecord.user);
+        console.warn(
+          `🧨 All sessions deleted for userId: ${reusedRecord.user}`
+        );
+      } else {
+        console.warn(`⚠️ Cannot identify user of reused token`);
+      }
+      throw new UnauthorizedError();
+    }
+
+    const foundRefreshToken = await keyTokenService.findByRefreshToken(
+      refreshTokenFromClient
+    );
+
+    if (!foundRefreshToken) {
+      console.error(
+        '❌ No key token found for the provided refresh token from client'
+      );
+      throw new UnauthorizedError();
+    }
+
+    const decodedToken = verifyToken(
+      refreshTokenFromClient,
+      foundRefreshToken.refreshTokenSecret
+    );
+
+    const shop = await ShopService.findByEmail({ email: decodedToken.email });
+    if (!shop) {
+      console.error(`❌ No shop found for email:: ${decodedToken.email}`);
+      throw new UnauthorizedError();
+    }
+    const newAccessSecret = crypto.randomBytes(64).toString('hex');
+    const newRefreshSecret = crypto.randomBytes(64).toString('hex');
+
+    const tokens = createTokenPair(
+      { userId: shop._id, email: shop.email },
+      newAccessSecret,
+      newRefreshSecret
+    );
+    const _ = await keyTokenService.storeKeyToken({
+      userId: shop._id,
+      refreshToken: tokens.refreshToken,
+      accessSecretKey: newAccessSecret,
+      refreshSecretKey: newRefreshSecret,
+      usedRefreshTokens: [
+        ...foundRefreshToken.usedRefreshTokens,
+        refreshTokenFromClient,
+      ],
+    });
+    return {
+      tokens,
+    };
   };
 }
 

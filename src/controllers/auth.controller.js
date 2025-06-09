@@ -23,10 +23,20 @@ class AuthController {
   };
 
   logout = async (req, res) => {
-    const { id: userId } = req.user;
+    const { user: userId } = req.keysInfo;
     await AuthService.logout(userId);
     new OkSuccess({
       message: SUCCESS_MESSAGES.LOGOUT_SUCCESSFUL,
+    }).send(res);
+  };
+
+  refreshToken = async (req, res) => {
+    const { refreshToken } = req.body;
+    new OkSuccess({
+      message: SUCCESS_MESSAGES.REFRESH_TOKEN_SUCCESSFUL,
+      metadata: await AuthService.refreshToken({
+        refreshToken,
+      }),
     }).send(res);
   };
 }

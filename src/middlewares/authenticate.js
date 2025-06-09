@@ -21,7 +21,6 @@ const authenticate = async (req, res, next) => {
     }
     throw new UnauthorizedError();
   }
-
   const token = accessToken.split(' ')[1];
   const keyToken = await KeyTokenService.getKeyTokenByUserId(clientId);
   if (!keyToken) {
@@ -30,7 +29,6 @@ const authenticate = async (req, res, next) => {
     );
     throw new UnauthorizedError();
   }
-
   const decodedAccessToken = verifyToken(token, keyToken.accessTokenSecret);
   if (decodedAccessToken.userId !== clientId) {
     console.error(
@@ -39,11 +37,7 @@ const authenticate = async (req, res, next) => {
     throw new UnauthorizedError();
   }
 
-  req.user = {
-    id: decodedAccessToken.userId,
-    role: decodedAccessToken.role,
-  };
-
+  req.keysInfo = keyToken;
   return next();
 };
 
