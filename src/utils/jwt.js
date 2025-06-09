@@ -33,7 +33,7 @@ const verifyToken = (token, secret) => {
   try {
     return jwt.verify(token, secret, { algorithms: [JWT_ALGORITHM] });
   } catch (err) {
-    throw new InternalServerError(ERROR_MESSAGES.FAILED_TO_VERIFY_TOKEN);
+    throw new UnauthorizedError(ERROR_MESSAGES.INVALID_OR_EXPIRED_TOKEN);
   }
 };
 

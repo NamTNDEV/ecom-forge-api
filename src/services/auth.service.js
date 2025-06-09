@@ -7,10 +7,50 @@ const { createTokenPair } = require('../utils/jwt');
 const {
   ConflictError,
   InternalServerError,
+  UnauthorizedError,
 } = require('../utils/responses/appError');
 const ERROR_MESSAGES = require('../constants/errorMessages');
+const ShopService = require('./shop.service');
 
 class AuthService {
+  static signin = async ({ email, password }) => {
+    // 1. Tìm shop theo email (phải lấy cả password nên dùng select)
+    const existingShop = await ShopService.findByEmail({ email });
+    if (!existingShop) {
+      throw new UnauthorizedError(ERROR_MESSAGES.INVALID_EMAIL_OR_PASSWORD);
+    }
+
+    const {
+      _id: shopId,
+      email: shopEmail,
+      password: shopPassword,
+    } = existingShop;
+
+    // 2. So sánh mật khẩu
+    const isPasswordValid = await bcrypt.compare(password, shopPassword);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError(ERROR_MESSAGES.INVALID_EMAIL_OR_PASSWORD);
+    }
+
+    // 3. Tạo token pair
+    const accessSecretKey = crypto.randomBytes(64).toString('hex');
+    const refreshSecretKey = crypto.randomBytes(64).toString('hex');
+    const tokens = createTokenPair(
+      { userId: shopId, email: shopEmail },
+      accessSecretKey,
+      refreshSecretKey
+    );
+    const _ = await keyTokenService.storeKeyToken({
+      userId: shopId,
+      refreshToken: tokens.refreshToken,
+      accessSecretKey,
+      refreshSecretKey,
+    });
+    return {
+      tokens,
+    };
+  };
+
   static signup = async ({ name, email, password }) => {
     const exitedShop = await shopModel.findOne({ email }).lean();
     if (exitedShop) {
@@ -66,8 +106,9 @@ class AuthService {
       accessSecretKey,
       refreshSecretKey
     );
-    const _ = await keyTokenService.createKeyToken({
+    const _ = await keyTokenService.storeKeyToken({
       userId: newShop._id,
+      refreshToken: tokens.refreshToken,
       accessSecretKey,
       refreshSecretKey,
     });
