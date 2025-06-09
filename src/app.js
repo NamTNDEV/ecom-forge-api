@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { checkOverloaded } = require('./helpers/connectChecker.helper'); // Import connectChecker if needed
 const router = require('./routes'); // Import your routes
+const errorHandler = require('./middlewares/handleError');
 
 const app = express();
 
@@ -22,9 +23,8 @@ app.use(express.json()); // Parses incoming requests with URL-encoded payloads
 app.use(express.urlencoded({ extended: true })); // Parses incoming requests with multipart/form-data payloads
 
 // Init Database
-const db = require('./configs/db.config'); // Ensure this file initializes the database connection
-const { errorHandler } = require('./middlewares/handleError');
-checkOverloaded(); // Start checking for overloaded connections
+require('./configs/db.config'); // Ensure this file initializes the database connection
+// checkOverloaded(); // Start checking for overloaded connections
 
 // Init Routes
 app.use('', router);

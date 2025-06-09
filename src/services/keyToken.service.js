@@ -1,6 +1,7 @@
 const keyTokenModel = require('../models/keyToken.model');
 const { InternalServerError } = require('../utils/responses/appError');
 const ERROR_MESSAGES = require('../constants/errorMessages');
+const { Types } = require('mongoose');
 
 class KeyTokenService {
   static storeKeyToken = async ({
@@ -34,8 +35,17 @@ class KeyTokenService {
       }
       return keyToken;
     } catch (error) {
-      throw new InternalServerError(error.message);
+      console.error(`❌ Error storing key token:: ${error.message}`);
+      throw new InternalServerError();
     }
+  };
+
+  static getKeyTokenByUserId = async userId => {
+    return await keyTokenModel.findOne({ user: userId }).lean();
+  };
+
+  static deleteKeyTokenByUserId = async userId => {
+    return await keyTokenModel.findOneAndDelete({ user: userId }).lean();
   };
 }
 

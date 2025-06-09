@@ -21,6 +21,14 @@ class AuthController {
       metadata: await AuthService.signin({ email, password }),
     }).send(res);
   };
+
+  logout = async (req, res) => {
+    const { id: userId } = req.user;
+    await AuthService.logout(userId);
+    new OkSuccess({
+      message: SUCCESS_MESSAGES.LOGOUT_SUCCESSFUL,
+    }).send(res);
+  };
 }
 
 module.exports = new AuthController();

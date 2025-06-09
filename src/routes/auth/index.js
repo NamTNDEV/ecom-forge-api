@@ -4,9 +4,10 @@ const authController = require('../../controllers/auth.controller');
 const verifyApiKey = require('../../middlewares/verifyApiKey');
 const checkPermission = require('../../middlewares/checkPermission');
 const PERMISSIONS = require('../../constants/apiKeyPermissions.constant');
-const { asyncErrorHandler } = require('../../middlewares/handleError');
+const asyncErrorHandler = require('../../utils/asyncHandler');
+const authenticate = require('../../middlewares/authenticate');
 
-// router.use(verifyApiKey);
+// router.use(asyncErrorHandler(verifyApiKey));
 
 router.post(
   '/shops/signup',
@@ -18,6 +19,12 @@ router.post(
   '/shops/signin',
   // checkPermission(PERMISSIONS.SHOP_READ),
   asyncErrorHandler(authController.signIn)
+);
+
+router.post(
+  '/shops/logout',
+  asyncErrorHandler(authenticate),
+  asyncErrorHandler(authController.logout)
 );
 
 module.exports = router;
