@@ -4,6 +4,7 @@
   "description": "Welcome to **EcomForgeApi**! This is an educational backend project for building a scalable E-commerce system using modern backend technologies. It's designed as a **learning playground** to explore practical aspects of backend development, system design, and integration.",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +22,7 @@
   "devDependencies": {
     "compression": "^1.8.0",
     "helmet": "^8.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10"
   }
 }

@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { checkOverloaded } = require('./helpers/connectChecker.helper'); // Import connectChecker if needed
 const router = require('./routes'); // Import your routes
-const errorHandler = require('./middlewares/handleError');
+const errorHandler = require('./middlewares/handleError.middleware');
 
 const app = express();
 

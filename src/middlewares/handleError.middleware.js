@@ -8,6 +8,7 @@ const errorHandler = (err, req, res, next) => {
     message: err.message || ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     ...(err.errors && { errors: err.errors }),
   };
+  console.log(`❌ Error response:: ${JSON.stringify(response)}`);
   return res.status(status).json(response);
 };
 

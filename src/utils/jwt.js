@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const envBaseConfig = require('../configs/env.config');
-const { InternalServerError } = require('./responses/appError');
+const {
+  InternalServerError,
+  UnauthorizedError,
+} = require('./responses/appError');
 const ERROR_MESSAGES = require('../constants/errorMessages');
 
 const JWT_ALGORITHM = 'HS256';
